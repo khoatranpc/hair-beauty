@@ -12,7 +12,7 @@ export type Product = {
   reviews: number;
   isNew: boolean;
   category: string;
-  createdAt: String;
+  createdAt: string;
 };
 interface ProductCardProps {
   product: Product;
