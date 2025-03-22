@@ -3,6 +3,8 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --primary: #ec4899;
+  --primary-soft: #f0d9e4;
 }
 
 @theme inline {
@@ -23,4 +25,43 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.ant-input-affix-wrapper {
+  border-radius: 9999px !important;
+  padding: 6px 12px !important;
+}
+
+.ant-input-affix-wrapper:hover {
+  border-color: #f472b6 !important;
+}
+
+.ant-input-affix-wrapper-focused {
+  border-color: #ec4899 !important;
+  box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.1) !important;
+}
+
+.ant-menu-horizontal {
+  border-bottom: none !important;
+}
+
+.ant-menu-horizontal {
+  line-height: 64px;
+}
+
+.ant-menu-item:hover {
+  color: #ec4899 !important;
+}
+
+.ant-menu-item-selected {
+  color: #ec4899 !important;
+}
+
+.ant-menu-item::after {
+  background-color: #ec4899 !important;
+}
+
+.custom-badge .ant-badge-count {
+  background: #ec4899;
+  box-shadow: 0 0 0 2px #fff;
 }
