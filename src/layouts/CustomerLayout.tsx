@@ -132,7 +132,7 @@ const CustomerLayout = ({ children }: { children: React.ReactNode }) => {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-4 lg:gap-8">
-              {navItems.slice(0, 4).map((item) => (
+              {navItems.slice(0, 2).map((item) => (
                 <Link
                   key={item.key}
                   href={item.href}
