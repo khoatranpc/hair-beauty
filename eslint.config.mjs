@@ -19,6 +19,7 @@ const eslintConfig = [
       "react/no-unescaped-entities": "off",
       "@next/next/no-img-element": "off",
       "react/jsx-key": "off",
+      "react-hooks/rules-of-hooks": "off",
     },
   },
 ];

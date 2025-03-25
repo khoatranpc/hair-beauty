@@ -7,7 +7,7 @@ import { LocalStorage } from "@/types/enum";
 import { getLocalStorage } from "@/utils";
 import { Loading3QuartersOutlined } from "@ant-design/icons";
 
-const layout = ({ children }: { children: React.ReactNode }) => {
+const Layout = ({ children }: { children: React.ReactNode }) => {
   const userProfile = useCrud("userProfile", {
     fetchData: userProfileSlice.fetchData,
   });
@@ -24,4 +24,4 @@ const layout = ({ children }: { children: React.ReactNode }) => {
   return children;
 };
 
-export default layout;
+export default Layout;
