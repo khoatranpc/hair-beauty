@@ -1,6 +1,6 @@
 "use client";
-import React, { useState } from "react";
-import { Layout, Menu, Badge, Input } from "antd";
+import React, { useEffect, useState } from "react";
+import { Layout, Menu, Badge, Input, Select } from "antd";
 import Link from "next/link";
 import {
   ShoppingCartOutlined,
@@ -11,16 +11,24 @@ import { Drawer, Button } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
 import { Dropdown } from "antd";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useCrud } from "@/hooks/useCrud";
+import { IObj } from "@/types/types";
+import { userProfileSlice } from "@/store/reducers/user";
+import { removeLocalStorage } from "@/utils";
+import { LocalStorage } from "@/types/enum";
 
 const { Header, Content, Footer } = Layout;
 
 const CustomerLayout = ({ children }: { children: React.ReactNode }) => {
   const [showSearch, setShowSearch] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
+  const router = useRouter();
   const pathname = usePathname();
-
-
+  const userProfile = useCrud("userProfile", {
+    fetchData: userProfileSlice.fetchData,
+  });
+  const getUserProfile = userProfile.single?.data as IObj;
   const navItems = [
     {
       key: "home",
@@ -61,7 +69,9 @@ const CustomerLayout = ({ children }: { children: React.ReactNode }) => {
   const getNavItemClass = (href: string) => {
     const isActive = pathname === href;
     return `text-gray-700 hover:text-primary-600 transition-colors text-sm lg:text-base font-medium p-2 rounded-sm ${
-      isActive ? "!text-primary-600 font-semibold !bg-[var(--primary-soft)]" : ""
+      isActive
+        ? "!text-primary-600 font-semibold !bg-[var(--primary-soft)]"
+        : ""
     }`;
   };
 
@@ -76,12 +86,14 @@ const CustomerLayout = ({ children }: { children: React.ReactNode }) => {
       ))}
     </Menu>
   );
-
+  useEffect(() => {
+    if (!getUserProfile) {
+      userProfile.fetch();
+    }
+  }, []);
   return (
     <Layout className="min-h-screen">
-      {/* Header */}
       <Header className="!bg-white border-b border-gray-100 flex flex-col fixed w-full z-10 !p-0 !h-auto">
-        {/* Top bar */}
         <div className="border-b-[0.5px] border-b-(--primary) py-2 px-4 text-center text-sm">
           Miễn phí vận chuyển cho đơn hàng từ 500k 🎀
         </div>
@@ -152,7 +164,6 @@ const CustomerLayout = ({ children }: { children: React.ReactNode }) => {
             </div>
           </div>
 
-          {/* Right Side Icons */}
           <div className="flex items-center gap-4 lg:gap-6">
             <div className="hidden sm:block">
               <Input
@@ -170,14 +181,53 @@ const CustomerLayout = ({ children }: { children: React.ReactNode }) => {
                 <ShoppingCartOutlined className="text-lg lg:text-xl" />
               </Badge>
             </Link>
-
-            <Link
-              href="/account"
-              className="hidden sm:flex items-center gap-2 text-gray-700 hover:text-primary-600 transition-colors px-4 py-2 hover:bg-primary-50 rounded-full"
-            >
-              <UserOutlined className="text-lg lg:text-xl" />
-              <span className="hidden md:inline font-medium">Tài khoản</span>
-            </Link>
+            {!getUserProfile ? (
+              <Link
+                href="/account"
+                className="hidden sm:flex items-center gap-2 text-gray-700 hover:text-primary-600 transition-colors hover:bg-primary-50 rounded-full"
+              >
+                <UserOutlined className="text-lg lg:text-xl" />
+                <span className="hidden md:inline font-medium">Tài khoản</span>
+              </Link>
+            ) : (
+              <Dropdown
+                placement="bottom"
+                menu={{
+                  items: [
+                    {
+                      key: "account",
+                      label: (
+                        <span className="hidden md:inline font-medium">
+                          Tài khoản
+                        </span>
+                      ),
+                      onClick() {
+                        router.push("/account");
+                      },
+                    },
+                    {
+                      key: "logout",
+                      label: (
+                        <span className="hidden md:inline font-medium">
+                          Đăng xuất
+                        </span>
+                      ),
+                      onClick() {
+                        removeLocalStorage(LocalStorage.access_token);
+                        window.location.reload();
+                      },
+                    },
+                  ],
+                }}
+              >
+                <Button type="default" className="hover:!bg-transparent">
+                  <UserOutlined className="text-lg lg:text-xl" />
+                  <span className="hidden md:inline font-medium">
+                    {getUserProfile?.fullName as string}
+                  </span>
+                </Button>
+              </Dropdown>
+            )}
           </div>
         </div>
       </Header>

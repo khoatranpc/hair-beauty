@@ -15,6 +15,7 @@ export const metadata: Metadata = {
 
 import { ConfigProvider } from "antd";
 import theme from "@/theme/themeConfig";
+import StoreProvider from "@/store/StoreProvider";
 import "./globals.css";
 
 export default function RootLayout({
@@ -27,7 +28,9 @@ export default function RootLayout({
       <body>
         <ConfigProvider theme={theme}>
           <AntdRegistry>
-            <CustomerLayout>{children}</CustomerLayout>
+            <StoreProvider>
+              <CustomerLayout>{children}</CustomerLayout>
+            </StoreProvider>
           </AntdRegistry>
         </ConfigProvider>
       </body>
