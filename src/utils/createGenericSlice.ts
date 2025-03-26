@@ -18,7 +18,11 @@ export interface GenericState<T = any> {
   };
 }
 
-interface RequestConfig {
+interface Param {
+  slugOrId?: string | number;
+}
+
+interface RequestConfig extends Param {
   params?: any;
   headers?: Record<string, string>;
 }
@@ -45,10 +49,13 @@ export const createGenericSlice = <T>(name: string, endpoint: string) => {
     `${name}/fetchData`,
     async (config?: RequestConfig) => {
       try {
-        const response = await axiosInstance.get(endpoint, {
-          params: config?.params,
-          headers: config?.headers,
-        });
+        const response = await axiosInstance.get(
+          `${endpoint}${config?.slugOrId ? `/${config.slugOrId}` : ""}`,
+          {
+            params: config?.params,
+            headers: config?.headers,
+          }
+        );
         return response.data;
       } catch (error: any) {
         throw error.response.data;

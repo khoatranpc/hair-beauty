@@ -4,6 +4,9 @@ import {
   userProfileSlice,
   userRegisterSlice,
 } from "./reducers/user";
+import { categoriesSlice } from "./reducers/category";
+import { productSlice } from "./reducers/product";
+import { uploadImagesSlice } from "./reducers/upload";
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +14,9 @@ export const store = configureStore({
     userRegister: userRegisterSlice.slice.reducer,
     userLogin: userLoginSlice.slice.reducer,
     userProfile: userProfileSlice.slice.reducer,
+    categories: categoriesSlice.slice.reducer,
+    products: productSlice.slice.reducer,
+    uploadImages: uploadImagesSlice.slice.reducer,
   },
 });
 

@@ -1,5 +1,6 @@
 import Intro from "@/screens/Intro";
+import CustomerLayout from "@/layouts/CustomerLayout";
 
 export default function Home() {
-  return <Intro />;
+  return <CustomerLayout><Intro /></CustomerLayout>;
 }

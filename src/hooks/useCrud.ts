@@ -32,7 +32,10 @@ export const useCrud = <T>(
     (state: RootState) => state[sliceName] as GenericState
   );
 
-  const create = async (data: Partial<T>, headers?: Record<string, string>) => {
+  const create = async (
+    data: Partial<T> | any,
+    headers?: Record<string, string>
+  ) => {
     try {
       const result = await dispatch(createData({ data, headers })).unwrap();
       callbacks?.onSuccess?.(result, "create");

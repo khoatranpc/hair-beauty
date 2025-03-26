@@ -1,11 +1,6 @@
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
-const CustomerLayout = dynamic(() => import("@/layouts/CustomerLayout"), {
-  loading() {
-    return <p>Loading....</p>;
-  },
-});
+
 
 export const metadata: Metadata = {
   title: "Hair Accessories Shop",
@@ -29,7 +24,7 @@ export default function RootLayout({
         <ConfigProvider theme={theme}>
           <AntdRegistry>
             <StoreProvider>
-              <CustomerLayout>{children}</CustomerLayout>
+              {children}
             </StoreProvider>
           </AntdRegistry>
         </ConfigProvider>

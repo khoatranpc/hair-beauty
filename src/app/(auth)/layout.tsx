@@ -4,8 +4,9 @@ import { redirect } from "next/navigation";
 import { useCrud } from "@/hooks/useCrud";
 import { userProfileSlice } from "@/store/reducers/user";
 import { LocalStorage } from "@/types/enum";
-import { getLocalStorage } from "@/utils";
+import { getLocalStorage, removeLocalStorage } from "@/utils";
 import { Loading3QuartersOutlined } from "@ant-design/icons";
+import CustomerLayout from "@/layouts/CustomerLayout";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const userProfile = useCrud("userProfile", {
@@ -19,7 +20,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   }, []);
   if (getAccessToken && !userProfile.single)
     return <Loading3QuartersOutlined className="animate-spin" />;
-  if (userProfile.error.fetch) return children;
+  if (userProfile.error.fetch || !getAccessToken) {
+    removeLocalStorage(LocalStorage.access_token);
+    return <CustomerLayout>{children}</CustomerLayout>;
+  }
   return redirect("/account");
 };
 

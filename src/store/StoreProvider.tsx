@@ -1,5 +1,6 @@
 "use client";
 import { Provider } from "react-redux";
+import { ToastContainer } from "react-toastify";
 import { store } from ".";
 
 export default function StoreProvider({
@@ -7,5 +8,10 @@ export default function StoreProvider({
 }: {
   children: React.ReactNode;
 }) {
-  return <Provider store={store}>{children}</Provider>;
+  return (
+    <Provider store={store}>
+      <ToastContainer />
+      {children}
+    </Provider>
+  );
 }

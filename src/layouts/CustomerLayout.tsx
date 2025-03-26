@@ -1,11 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Layout, Menu, Badge, Input, Select } from "antd";
+import { Layout, Menu, Badge, Input, Select, Tooltip } from "antd";
 import Link from "next/link";
 import {
   ShoppingCartOutlined,
   UserOutlined,
   SearchOutlined,
+  DatabaseOutlined,
 } from "@ant-design/icons";
 import { Drawer, Button } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
@@ -16,7 +17,7 @@ import { useCrud } from "@/hooks/useCrud";
 import { IObj } from "@/types/types";
 import { userProfileSlice } from "@/store/reducers/user";
 import { removeLocalStorage } from "@/utils";
-import { LocalStorage } from "@/types/enum";
+import { LocalStorage, UserRole } from "@/types/enum";
 
 const { Header, Content, Footer } = Layout;
 
@@ -190,43 +191,55 @@ const CustomerLayout = ({ children }: { children: React.ReactNode }) => {
                 <span className="hidden md:inline font-medium">Tài khoản</span>
               </Link>
             ) : (
-              <Dropdown
-                placement="bottom"
-                menu={{
-                  items: [
-                    {
-                      key: "account",
-                      label: (
-                        <span className="hidden md:inline font-medium">
-                          Tài khoản
-                        </span>
-                      ),
-                      onClick() {
-                        router.push("/account");
+              <div className="flex items-center gap-2">
+                {getUserProfile?.role === UserRole.ADMIN && (
+                  <Tooltip title="Trang quản lý" placement="bottom">
+                    <Button
+                      icon={<DatabaseOutlined />}
+                      onClick={() => {
+                        router.push("/dashboard");
+                      }}
+                    />
+                  </Tooltip>
+                )}
+                <Dropdown
+                  placement="bottom"
+                  menu={{
+                    items: [
+                      {
+                        key: "account",
+                        label: (
+                          <span className="hidden md:inline font-medium">
+                            Tài khoản
+                          </span>
+                        ),
+                        onClick() {
+                          router.push("/account");
+                        },
                       },
-                    },
-                    {
-                      key: "logout",
-                      label: (
-                        <span className="hidden md:inline font-medium">
-                          Đăng xuất
-                        </span>
-                      ),
-                      onClick() {
-                        removeLocalStorage(LocalStorage.access_token);
-                        window.location.reload();
+                      {
+                        key: "logout",
+                        label: (
+                          <span className="hidden md:inline font-medium">
+                            Đăng xuất
+                          </span>
+                        ),
+                        onClick() {
+                          removeLocalStorage(LocalStorage.access_token);
+                          window.location.reload();
+                        },
                       },
-                    },
-                  ],
-                }}
-              >
-                <Button type="default" className="hover:!bg-transparent">
-                  <UserOutlined className="text-lg lg:text-xl" />
-                  <span className="hidden md:inline font-medium">
-                    {getUserProfile?.fullName as string}
-                  </span>
-                </Button>
-              </Dropdown>
+                    ],
+                  }}
+                >
+                  <Button type="default">
+                    <UserOutlined className="text-lg lg:text-xl" />
+                    <span className="hidden md:inline font-medium">
+                      {getUserProfile?.fullName as string}
+                    </span>
+                  </Button>
+                </Dropdown>
+              </div>
             )}
           </div>
         </div>
