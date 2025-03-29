@@ -18,6 +18,7 @@ import { IObj } from "@/types/types";
 import { userProfileSlice } from "@/store/reducers/user";
 import { removeLocalStorage } from "@/utils";
 import { LocalStorage, UserRole } from "@/types/enum";
+import { cartSlice } from "@/store/reducers/cart";
 
 const { Header, Content, Footer } = Layout;
 
@@ -26,9 +27,29 @@ const CustomerLayout = ({ children }: { children: React.ReactNode }) => {
   const [menuVisible, setMenuVisible] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-  const userProfile = useCrud("userProfile", {
-    fetchData: userProfileSlice.fetchData,
+  const cart = useCrud("cart", {
+    fetchData: cartSlice.fetchData,
   });
+  const getCart = cart.single?.data?.items?.items as IObj[];
+  const userProfile = useCrud(
+    "userProfile",
+    {
+      fetchData: userProfileSlice.fetchData,
+    },
+    {
+      onSuccess(_, type) {
+        switch (type) {
+          case "read":
+            cart.fetch();
+            break;
+
+          default:
+            break;
+        }
+      },
+    }
+  );
+
   const getUserProfile = userProfile.single?.data as IObj;
   const navItems = [
     {
@@ -178,7 +199,7 @@ const CustomerLayout = ({ children }: { children: React.ReactNode }) => {
               href="/cart"
               className="text-gray-700 hover:text-primary-600 transition-colors p-2 hover:bg-primary-50 rounded-full relative"
             >
-              <Badge count={0} size="small" className="custom-badge">
+              <Badge count={getCart?.length ?? 0} size="small" className="custom-badge">
                 <ShoppingCartOutlined className="text-lg lg:text-xl" />
               </Badge>
             </Link>

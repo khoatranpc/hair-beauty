@@ -1,5 +1,6 @@
+import dynamic from "next/dynamic";
 import React from "react";
-import ProductDetail from "@/screens/ProductDetail";
+const ProductDetail = dynamic(() => import("@/screens/products/ProductDetail"));
 
 const page = () => {
   return <ProductDetail />;

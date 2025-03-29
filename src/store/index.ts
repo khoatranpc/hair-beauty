@@ -7,6 +7,8 @@ import {
 import { categoriesSlice } from "./reducers/category";
 import { productSlice } from "./reducers/product";
 import { uploadImagesSlice } from "./reducers/upload";
+import { cartSlice } from "./reducers/cart";
+import { orderSlice } from "./reducers/order";
 
 export const store = configureStore({
   reducer: {
@@ -17,6 +19,8 @@ export const store = configureStore({
     categories: categoriesSlice.slice.reducer,
     products: productSlice.slice.reducer,
     uploadImages: uploadImagesSlice.slice.reducer,
+    cart: cartSlice.slice.reducer,
+    order: orderSlice.slice.reducer,
   },
 });
 
