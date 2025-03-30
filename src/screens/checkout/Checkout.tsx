@@ -8,6 +8,7 @@ import { cartSlice } from "@/store/reducers/cart";
 import { getLocalStorage, removeLocalStorage } from "@/utils";
 import { LocalStorage } from "@/types/enum";
 import { orderSlice } from "@/store/reducers/order";
+import { toast } from "react-toastify";
 
 const Checkout = () => {
   const router = useRouter();
@@ -15,16 +16,38 @@ const Checkout = () => {
   const cart = useCrud("cart", {
     fetchData: cartSlice.fetchData,
   });
-  const order = useCrud("order", {
-    fetchData: orderSlice.createData,
-  });
+  const getCart = (cart.single?.data as IObj) ?? {};
+  const order = useCrud(
+    "orders",
+    {
+      fetchData: orderSlice.fetchData,
+      createData: orderSlice.createData,
+      clearDataState: orderSlice.slice.actions.clearData,
+    },
+    {
+      onSuccess(data, type) {
+        switch (type) {
+          case "create":
+            toast.success("Đặt hàng thành công");
+            order.clearData();
+            break;
+          default:
+            break;
+        }
+      },
+    }
+  );
   const getCheckoutProducts = JSON.parse(
     getLocalStorage(LocalStorage.checkout_products) as string
   );
-  const selectedItems = getCheckoutProducts?.filter(
-    (item: IObj) => item.selected
-  );
-
+  const products = getCheckoutProducts?.map((_id: string) => {
+    return (getCart.items?.items as IObj[])?.find((item: IObj) => {
+      if (item.product._id === _id) {
+        return item;
+      }
+    });
+  });
+  const selectedItems = products;
   const totals = selectedItems?.reduce(
     (acc: any, item: IObj) => {
       const price = item?.product?.price || 0;
@@ -40,7 +63,10 @@ const Checkout = () => {
   );
 
   const onFinish = (values: any) => {
-    console.log("Form values:", values, getCheckoutProducts);
+    order.create({
+      productIds: getCheckoutProducts,
+      shippingAddress: values,
+    });
   };
   useEffect(() => {
     return () => {

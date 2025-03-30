@@ -53,9 +53,9 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
       ],
     },
     {
-      key: "/admin/orders",
+      key: "/orders/list",
       icon: <ShopOutlined />,
-      label: "Đơn hàng",
+      label: <Link href={"/orders/list"}>Đơn hàng</Link>,
     },
     {
       key: "/admin/customers",

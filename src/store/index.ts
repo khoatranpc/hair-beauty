@@ -20,7 +20,7 @@ export const store = configureStore({
     products: productSlice.slice.reducer,
     uploadImages: uploadImagesSlice.slice.reducer,
     cart: cartSlice.slice.reducer,
-    order: orderSlice.slice.reducer,
+    orders: orderSlice.slice.reducer,
   },
 });
 

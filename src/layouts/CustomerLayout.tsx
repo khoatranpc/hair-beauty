@@ -199,7 +199,11 @@ const CustomerLayout = ({ children }: { children: React.ReactNode }) => {
               href="/cart"
               className="text-gray-700 hover:text-primary-600 transition-colors p-2 hover:bg-primary-50 rounded-full relative"
             >
-              <Badge count={getCart?.length ?? 0} size="small" className="custom-badge">
+              <Badge
+                count={getCart?.length ?? 0}
+                size="small"
+                className="custom-badge"
+              >
                 <ShoppingCartOutlined className="text-lg lg:text-xl" />
               </Badge>
             </Link>
@@ -236,6 +240,17 @@ const CustomerLayout = ({ children }: { children: React.ReactNode }) => {
                         ),
                         onClick() {
                           router.push("/account");
+                        },
+                      },
+                      {
+                        key: "orders",
+                        label: (
+                          <span className="hidden md:inline font-medium">
+                            Đơn hàng
+                          </span>
+                        ),
+                        onClick() {
+                          router.push("/orders");
                         },
                       },
                       {

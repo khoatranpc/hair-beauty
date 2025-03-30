@@ -22,8 +22,6 @@ const ProductTable: React.FC<ProductTableProps> = ({
   loading,
   total,
   onDelete,
-  onEdit,
-  onView,
   onPaginationChange,
 }) => {
   const router = useRouter();
@@ -52,12 +50,12 @@ const ProductTable: React.FC<ProductTableProps> = ({
       title: "Danh mục",
       dataIndex: "categories",
       key: "categories",
-      render(value, record, index) {
+      render(value) {
         return (
           <div>
             {(value as IObj[]).map((item, idx) => {
               return (
-                <Link href={item.slug}>
+                <Link href={item._id}>
                   {item.name} {idx < value.length - 1 ? "| " : ""}
                 </Link>
               );

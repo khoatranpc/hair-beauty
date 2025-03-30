@@ -24,11 +24,18 @@ export const useCrud = <T>(
     createData,
     updateData,
     deleteData,
-  }: { fetchData?: any; createData?: any; updateData?: any; deleteData?: any },
+    clearDataState,
+  }: {
+    fetchData?: any;
+    createData?: any;
+    updateData?: any;
+    deleteData?: any;
+    clearDataState?: any;
+  },
   callbacks?: CrudCallbacks
 ) => {
   const dispatch = useDispatch();
-  const { error, list, loading, single } = useSelector(
+  const { error, list, loading, single, fetched } = useSelector(
     (state: RootState) => state[sliceName] as GenericState
   );
 
@@ -87,15 +94,19 @@ export const useCrud = <T>(
       throw error;
     }
   };
-
+  const clearData = () => {
+    dispatch(clearDataState());
+  };
   return {
     list,
     single,
     loading,
     error,
+    fetched,
     fetch,
     create,
     update,
     remove,
+    clearData,
   };
 };

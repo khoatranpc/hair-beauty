@@ -10,6 +10,12 @@ export interface GenericState<T = any> {
     update: boolean;
     delete: boolean;
   };
+  fetched: {
+    fetch: boolean;
+    create: boolean;
+    update: boolean;
+    delete: boolean;
+  };
   error: {
     fetch: string | null;
     create: string | null;
@@ -32,6 +38,12 @@ export const createGenericSlice = <T>(name: string, endpoint: string) => {
     list: null,
     single: null,
     loading: {
+      fetch: false,
+      create: false,
+      update: false,
+      delete: false,
+    },
+    fetched: {
       fetch: false,
       create: false,
       update: false,
@@ -147,30 +159,28 @@ export const createGenericSlice = <T>(name: string, endpoint: string) => {
         .addCase(fetchData.pending, (state) => {
           state.loading.fetch = true;
           state.error.fetch = null;
+          state.fetched.fetch = false;
         })
-        .addCase(
-          fetchData.fulfilled,
-          (state, action: PayloadAction<T[] | T>) => {
-            state.loading.fetch = false;
-            state.list = Array.isArray(action.payload)
-              ? (action.payload as any)
-              : (null as any);
-            state.single = !Array.isArray(action.payload)
-              ? (action.payload as any)
-              : null;
-          }
-        )
+        .addCase(fetchData.fulfilled, (state, action: PayloadAction<T[] | T>) => {
+          state.loading.fetch = false;
+          state.fetched.fetch = true;
+          state.list = Array.isArray(action.payload) ? (action.payload as any) : (null as any);
+          state.single = !Array.isArray(action.payload) ? (action.payload as any) : null;
+        })
         .addCase(fetchData.rejected, (state, action) => {
           state.loading.fetch = false;
+          state.fetched.fetch = true;
           state.error.fetch = action.error.message || "An error occurred";
         })
 
         .addCase(createData.pending, (state) => {
           state.loading.create = true;
           state.error.create = null;
+          state.fetched.create = false;
         })
         .addCase(createData.fulfilled, (state, action: PayloadAction<T>) => {
           state.loading.create = false;
+          state.fetched.create = true;
           state.single = action.payload as any;
           if (state.list) {
             state.list.push(action.payload as any);
@@ -178,15 +188,18 @@ export const createGenericSlice = <T>(name: string, endpoint: string) => {
         })
         .addCase(createData.rejected, (state, action) => {
           state.loading.create = false;
+          state.fetched.create = true;
           state.error.create = action.error.message || "An error occurred";
         })
 
         .addCase(updateData.pending, (state) => {
           state.loading.update = true;
           state.error.update = null;
+          state.fetched.update = false;
         })
         .addCase(updateData.fulfilled, (state, action: PayloadAction<T>) => {
           state.loading.update = false;
+          state.fetched.update = true;
           state.single = action.payload as any;
           if (state.list) {
             const index = state.list.findIndex(
@@ -199,15 +212,18 @@ export const createGenericSlice = <T>(name: string, endpoint: string) => {
         })
         .addCase(updateData.rejected, (state, action) => {
           state.loading.update = false;
+          state.fetched.update = true;
           state.error.update = action.error.message || "An error occurred";
         })
 
         .addCase(deleteData.pending, (state) => {
           state.loading.delete = true;
           state.error.delete = null;
+          state.fetched.delete = false;
         })
         .addCase(deleteData.fulfilled, (state, action) => {
           state.loading.delete = false;
+          state.fetched.delete = true;
           state.single = null;
           if (state.list) {
             state.list = state.list.filter(
@@ -217,6 +233,7 @@ export const createGenericSlice = <T>(name: string, endpoint: string) => {
         })
         .addCase(deleteData.rejected, (state, action) => {
           state.loading.delete = false;
+          state.fetched.delete = true;
           state.error.delete = action.error.message || "An error occurred";
         });
     },

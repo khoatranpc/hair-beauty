@@ -13,3 +13,23 @@ export enum CartActionType {
   REMOVE = "remove",
   CLEAR = "clear",
 }
+
+export enum OrderStatus {
+  PENDING = "pending",
+  CONFIRMED = "confirmed",
+  SHIPPING = "shipping",
+  DELIVERED = "delivered",
+  CANCELLED = "cancelled",
+}
+
+export enum PaymentMethod {
+  COD = "cod",
+  BANKING = "banking",
+  SHIP = "ship",
+}
+
+export enum PaymentStatus {
+  PENDING = "pending",
+  PAID = "paid",
+  FAILED = "failed",
+}

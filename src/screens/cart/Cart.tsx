@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useMemo } from "react";
+import React, { act, useEffect, useMemo, useRef } from "react";
 import {
   Button,
   Card,
@@ -9,24 +9,160 @@ import {
   Image,
   InputNumber,
 } from "antd";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, UseFormSetValue } from "react-hook-form";
 import { DeleteOutlined, ShoppingOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { IObj } from "@/types/types";
 import { useCrud } from "@/hooks/useCrud";
 import { cartSlice } from "@/store/reducers/cart";
 import { saveLocalStorage } from "@/utils";
-import { LocalStorage } from "@/types/enum";
+import { CartActionType, LocalStorage } from "@/types/enum";
 
 interface CartFormValues {
   items: IObj[];
 }
-
+interface CartListProps {
+  fields: IObj[];
+  watchItems: IObj[];
+  cartItems: IObj[];
+  handleUpdateCart: (
+    action: CartActionType,
+    productId: string,
+    quantity?: number
+  ) => void;
+  setValue: UseFormSetValue<any>;
+}
+const CartList = ({
+  cartItems,
+  fields,
+  watchItems,
+  handleUpdateCart,
+  setValue,
+}: CartListProps) => {
+  const cart = useCrud("cart", {});
+  return fields.map((item: IObj, index) => {
+    return (
+      <Card
+        key={item?._id}
+        className="shadow-md hover:shadow-lg transition-shadow !mb-2"
+        loading={cart.loading.fetch || cart.loading.create}
+      >
+        <div className="flex gap-6">
+          <Checkbox
+            checked={watchItems[index]?.selected}
+            onChange={(e) => {
+              setValue(`items.${index}.selected`, e.target.checked);
+            }}
+            className="mt-8"
+          />
+          <div className="relative group">
+            <Image
+              src={item?.product?.images?.[0]}
+              alt={item?.product?.name}
+              className="!w-24 !h-24 object-cover rounded-lg border border-gray-100"
+            />
+          </div>
+          <div className="flex-grow">
+            <div className="flex justify-between items-start">
+              <div>
+                <h3 className="font-medium text-lg text-gray-800 hover:text-primary-600 transition-colors cursor-pointer">
+                  {item?.product?.name}
+                </h3>
+              </div>
+              <Button
+                type="text"
+                danger
+                icon={<DeleteOutlined />}
+                className="hover:bg-red-50"
+                onClick={() => console.log("Remove item:", item.id)}
+              />
+            </div>
+            <div className="mt-6 flex items-center justify-between">
+              <div className="space-y-1.5">
+                {item.product.salePrice ? (
+                  <>
+                    <div className="text-xl font-semibold text-red-500">
+                      {new Intl.NumberFormat("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      }).format(item.product.salePrice)}
+                    </div>
+                    <div className="text-sm text-gray-400 line-through">
+                      {new Intl.NumberFormat("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      }).format(item.product.price)}
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-xl font-semibold text-primary-600">
+                    {new Intl.NumberFormat("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    }).format(item.price)}
+                  </div>
+                )}
+              </div>
+              <InputNumber
+                disabled={watchItems[index]?.selected}
+                min={1}
+                max={cartItems[index]?.product?.stock}
+                value={watchItems[index]?.quantity}
+                onChange={(value) => {
+                  setValue(`items.${index}.quantity`, value || 1);
+                  handleUpdateCart(
+                    CartActionType.UPDATE,
+                    item.product._id,
+                    value
+                  );
+                }}
+                className="w-24"
+                controls
+                size="small"
+              />
+              <div className="text-xl font-semibold text-primary-600">
+                {new Intl.NumberFormat("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                }).format((item.salePrice || item.price) * item.quantity)}
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card>
+    );
+  });
+};
+const MemoCartList = React.memo(CartList, (prevProps, nextProps) => {
+  if (
+    JSON.stringify(prevProps.fields) !== JSON.stringify(nextProps.fields) ||
+    nextProps.cartItems
+  )
+    return false;
+  return true;
+});
 const Cart = () => {
   const router = useRouter();
-  const cart = useCrud("cart", {
-    fetchData: cartSlice.fetchData,
-  });
+  const firstRender = useRef<boolean>(true);
+  const cart = useCrud(
+    "cart",
+    {
+      fetchData: cartSlice.fetchData,
+      createData: cartSlice.createData,
+    },
+    {
+      onSuccess(data, type) {
+        switch (type) {
+          case "create":
+          case "delete":
+            cart.fetch();
+            break;
+          default:
+            break;
+        }
+      },
+    }
+  );
   const cartItems: IObj[] = (cart.single?.data?.items?.items as IObj[]) ?? [];
 
   const { control, watch, setValue, reset } = useForm<CartFormValues>({
@@ -71,17 +207,53 @@ const Cart = () => {
     );
   };
   const handleSubmit = () => {
-    const getListProductSelectedForOrder = watchItems.filter(
-      (item) => item.selected
-    );
+    const getListProductSelectedForOrder = watchItems
+      .filter((item) => item.selected)
+      .map((item) => {
+        return item.product._id;
+      });
     saveLocalStorage(
       LocalStorage.checkout_products,
       JSON.stringify(getListProductSelectedForOrder)
     );
     router.push("/checkout");
   };
+  const handleUpdateCart = (
+    action: CartActionType,
+    productId: string,
+    quantity?: number
+  ) => {
+    switch (action) {
+      case CartActionType.UPDATE:
+        cart.create({
+          action: CartActionType.UPDATE,
+          productId,
+          quantity,
+        });
+        break;
 
-  if (!cartItems.length) {
+      default:
+        break;
+    }
+  };
+  useEffect(() => {
+    if (cart.single) {
+      firstRender.current = !!cartItems.length;
+      reset({
+        items: cartItems.map((item) => {
+          return {
+            ...item,
+            id: item._id,
+            quantity: item.quantity,
+            selected: false,
+          };
+        }),
+      });
+    } else {
+      firstRender.current = true;
+    }
+  }, [cart.single]);
+  if (!cartItems.length && firstRender.current) {
     return (
       <div className="container mx-auto px-4 py-8">
         <Empty
@@ -99,20 +271,7 @@ const Cart = () => {
       </div>
     );
   }
-  useEffect(() => {
-    if (cart.single) {
-      reset({
-        items: cartItems.map((item) => {
-          return {
-            ...item,
-            id: item._id,
-            quantity: item.quantity,
-            selected: false,
-          };
-        }),
-      });
-    }
-  }, [cart.single]);
+
   return (
     <div className="container mx-auto px-4 py-8 min-h-[50vh]">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -128,98 +287,17 @@ const Cart = () => {
               Chọn tất cả
             </Checkbox>
           </div>
-
-          {fields.map((item: IObj, index) => {
-            return (
-              <Card
-                key={item?._id}
-                className="shadow-md hover:shadow-lg transition-shadow !mb-2"
-              >
-                <div className="flex gap-6">
-                  <Checkbox
-                    checked={watchItems[index]?.selected}
-                    onChange={(e) => {
-                      setValue(`items.${index}.selected`, e.target.checked);
-                    }}
-                    className="mt-8"
-                  />
-                  <div className="relative group">
-                    <Image
-                      src={item?.product?.images?.[0]}
-                      alt={item?.product?.name}
-                      className="!w-24 !h-24 object-cover rounded-lg border border-gray-100"
-                    />
-                  </div>
-                  <div className="flex-grow">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-medium text-lg text-gray-800 hover:text-primary-600 transition-colors cursor-pointer">
-                          {item?.product?.name}
-                        </h3>
-                      </div>
-                      <Button
-                        type="text"
-                        danger
-                        icon={<DeleteOutlined />}
-                        className="hover:bg-red-50"
-                        onClick={() => console.log("Remove item:", item.id)}
-                      />
-                    </div>
-                    <div className="mt-6 flex items-center justify-between">
-                      <div className="space-y-1.5">
-                        {item.product.salePrice ? (
-                          <>
-                            <div className="text-xl font-semibold text-red-500">
-                              {new Intl.NumberFormat("vi-VN", {
-                                style: "currency",
-                                currency: "VND",
-                              }).format(item.product.salePrice)}
-                            </div>
-                            <div className="text-sm text-gray-400 line-through">
-                              {new Intl.NumberFormat("vi-VN", {
-                                style: "currency",
-                                currency: "VND",
-                              }).format(item.product.price)}
-                            </div>
-                          </>
-                        ) : (
-                          <div className="text-xl font-semibold text-primary-600">
-                            {new Intl.NumberFormat("vi-VN", {
-                              style: "currency",
-                              currency: "VND",
-                            }).format(item.price)}
-                          </div>
-                        )}
-                      </div>
-                      <InputNumber
-                        min={1}
-                        max={cartItems[index]?.product?.stock}
-                        value={watchItems[index]?.quantity}
-                        onChange={(value) =>
-                          setValue(`items.${index}.quantity`, value || 1)
-                        }
-                        className="w-24"
-                        controls
-                        size="small"
-                      />
-                      <div className="text-xl font-semibold text-primary-600">
-                        {new Intl.NumberFormat("vi-VN", {
-                          style: "currency",
-                          currency: "VND",
-                        }).format(
-                          (item.salePrice || item.price) * item.quantity
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            );
-          })}
+          <MemoCartList
+            cartItems={cartItems}
+            fields={fields}
+            watchItems={watchItems}
+            handleUpdateCart={handleUpdateCart}
+            setValue={setValue}
+          />
         </div>
 
         <div className="lg:col-span-1">
-          <Card bordered={false} className="sticky top-[100px] shadow-md">
+          <Card className="sticky top-[100px] shadow-md">
             <h3 className="text-lg font-medium mb-4 text-gray-800">
               Tổng đơn hàng ({watchItems.filter((item) => item.selected).length}{" "}
               sản phẩm)

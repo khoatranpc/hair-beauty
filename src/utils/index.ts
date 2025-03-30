@@ -1,4 +1,4 @@
-import { LocalStorage } from "@/types/enum";
+import { LocalStorage, OrderStatus } from "@/types/enum";
 
 export const saveLocalStorage = (key: LocalStorage, value: string) => {
   if (typeof window !== "undefined") {
@@ -14,4 +14,11 @@ export const removeLocalStorage = (key: LocalStorage) => {
   if (typeof window !== "undefined") {
     return localStorage.removeItem(key);
   }
+};
+export const orderStatusString: Record<OrderStatus, string> = {
+  cancelled: "Đã huỷ",
+  pending: "Đang chờ xử lý",
+  confirmed: "Đã xác nhận",
+  shipping: "Đang giao hàng",
+  delivered: "Đã giao hàng",
 };
