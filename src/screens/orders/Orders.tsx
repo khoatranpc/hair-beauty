@@ -79,12 +79,12 @@ const Orders = () => {
                 {order.items.map((item: any) => (
                   <div key={item._id} className="flex gap-4">
                     <img
-                      src={item.product.images[0]}
-                      alt={item.product.name}
+                      src={item.product?.images?.[0]}
+                      alt={item.product?.name}
                       className="w-20 h-20 object-cover rounded-md"
                     />
                     <div className="flex-grow">
-                      <h3 className="font-medium">{item.product.name}</h3>
+                      <h3 className="font-medium">{item.product?.name}</h3>
                       <p className="text-gray-500 text-sm">
                         Số lượng: {item.quantity}
                       </p>

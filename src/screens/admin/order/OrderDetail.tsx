@@ -8,28 +8,60 @@ import {
   Timeline,
   Button,
   Divider,
-  message,
+  Breadcrumb,
 } from "antd";
+import { toast } from "react-toastify";
+import { ShopOutlined } from "@ant-design/icons";
+import { useParams, useRouter } from "next/navigation";
 import { useCrud } from "@/hooks/useCrud";
 import { orderSlice } from "@/store/reducers/order";
-import { useParams } from "next/navigation";
-import { OrderStatus } from "@/types/enum";
-import { orderStatusString } from "@/utils";
+import { LocalStorage, OrderStatus } from "@/types/enum";
+import { getLocalStorage, orderStatusString } from "@/utils";
 import { mapStatusToColor } from "@/screens/orders/Orders";
 
 export const OrderDetail = () => {
   const { slug } = useParams();
-  const orders = useCrud("orders", {
-    fetchData: orderSlice.fetchData,
-    updateData: orderSlice.updateData,
-  });
+  const router = useRouter();
+  const orders = useCrud(
+    "orders",
+    {
+      fetchData: orderSlice.fetchData,
+      updateData: orderSlice.updateData,
+    },
+    {
+      onSuccess(_, type) {
+        switch (type) {
+          case "update":
+            toast.success("Cập nhật trạng thái đơn hàng thành công");
+            break;
+          default:
+            break;
+        }
+      },
+      onError(error, type) {
+        switch (type) {
+          case "update":
+            toast.error(
+              error?.message || "Cập nhật trạng thái đơn hàng thất bại"
+            );
+            break;
+          default:
+            break;
+        }
+      },
+    }
+  );
 
   const orderData = orders.single?.data ?? {};
 
   const currentStep = orderData?.status
     ? Object.values(OrderStatus).indexOf(orderData.status)
     : 0;
-
+  const getBackurl = (
+    getLocalStorage(LocalStorage.callBackUrl) as string
+  ).includes("/orders/list")
+    ? (getLocalStorage(LocalStorage.callBackUrl) as string)
+    : "/orders/list";
   useEffect(() => {
     if (slug) {
       orders.fetch({ slugOrId: slug });
@@ -37,6 +69,27 @@ export const OrderDetail = () => {
   }, [slug]);
   return (
     <div className="p-6 space-y-6">
+      <Breadcrumb
+        className="!mb-4"
+        items={[
+          {
+            key: "orders",
+            title: (
+              <span>
+                <ShopOutlined /> Đơn hàng
+              </span>
+            ),
+            onClick() {
+              router.push(getBackurl);
+            },
+            className: "cursor-pointer",
+          },
+          {
+            key: "detail",
+            title: <span>#{orderData?.orderCode}</span>,
+          },
+        ]}
+      />
       <Card
         title="Chi tiết đơn hàng"
         extra={
@@ -107,12 +160,12 @@ export const OrderDetail = () => {
               className="flex items-center gap-4 p-4 border rounded-lg"
             >
               <img
-                src={item.product.images[0]}
-                alt={item.product.name}
+                src={item.product?.images?.[0]}
+                alt={item.product?.name}
                 className="w-20 h-20 object-cover rounded-md"
               />
               <div className="flex-grow">
-                <h3 className="font-medium">{item.product.name}</h3>
+                <h3 className="font-medium">{item.product?.name}</h3>
                 <p className="text-gray-500">Số lượng: {item.quantity}</p>
                 <div className="text-primary-600">
                   {new Intl.NumberFormat("vi-VN", {
@@ -156,13 +209,20 @@ export const OrderDetail = () => {
         </div>
       </Card>
 
-      <Card title="Cập nhật trạng thái" className="!mb-4">
+      <Card
+        title="Cập nhật trạng thái"
+        className="!mb-4"
+        loading={orders.loading.update}
+      >
         <div className="space-x-4">
           {Object.values(OrderStatus).map((status) => (
             <Button
               key={status}
               type={orderData?.status === status ? "primary" : "default"}
               disabled={orderData?.status === status}
+              onClick={() => {
+                orders.update(orderData?._id, { status });
+              }}
             >
               {orderStatusString[status]}
             </Button>

@@ -19,8 +19,8 @@ import { orderSlice } from "@/store/reducers/order";
 import { ColumnsType } from "antd/es/table";
 import OrderFilter from "./components/OrderFilter";
 import { IObj } from "@/types/types";
-import { orderStatusString } from "@/utils";
-import { OrderStatus } from "@/types/enum";
+import { orderStatusString, saveLocalStorage } from "@/utils";
+import { LocalStorage, OrderStatus } from "@/types/enum";
 import { mapStatusToColor } from "@/screens/orders/Orders";
 
 const OrderList = () => {
@@ -71,17 +71,17 @@ const OrderList = () => {
       key: "items",
       render: (items: any[]) => (
         <div className="space-y-2">
-          {items.map((item, index) => (
+          {items?.map((item, index) => (
             <div key={index} className="flex items-center gap-2">
               <img
-                src={item.product.images[0]}
-                alt={item.product.name}
+                src={item.product?.images?.[0]}
+                alt={item.product?.name}
                 className="w-10 h-10 object-cover rounded"
               />
-              <Tooltip title={item.product.name}>
+              <Tooltip title={item.product?.name}>
                 <div className="flex-1 truncate max-w-[200px]">
                   <div className="font-medium truncate">
-                    {item.product.name}
+                    {item.product?.name}
                   </div>
                   <div className="text-xs text-gray-500">
                     {new Intl.NumberFormat("vi-VN", {
@@ -104,7 +104,7 @@ const OrderList = () => {
       key: "quantity",
       width: 200,
       render: (items: any[]) => {
-        const totalQuantity = items.reduce(
+        const totalQuantity = items?.reduce(
           (sum, item) => sum + item.quantity,
           0
         );
@@ -168,7 +168,9 @@ const OrderList = () => {
         params.set(key, filters[key]);
       }
     });
-    router.push(`/orders/list?${params.toString()}`);
+    const mapUrl = `/orders/list?${params.toString()}`;
+    saveLocalStorage(LocalStorage.callBackUrl, mapUrl);
+    router.push(mapUrl);
   }, [filters]);
 
   return (

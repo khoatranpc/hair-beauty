@@ -1,54 +1,25 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, Card, Rate, Typography } from "antd";
 import { motion } from "framer-motion";
 import {
-  ShopOutlined,
   StarOutlined,
-  HeartOutlined,
   ToolOutlined,
   ShoppingCartOutlined,
 } from "@ant-design/icons";
+import { useCrud } from "@/hooks/useCrud";
+import { productSlice } from "@/store/reducers/product";
+import { IObj } from "@/types/types";
+import ProductCard from "@/components/ProductCard";
+import ProductsLoading from "@/components/ProductsLoading";
 
 const { Title, Paragraph } = Typography;
 
 const Intro = () => {
-  const products = [
-    {
-      id: 1,
-      name: "Kẹp tóc cao cấp",
-      image: "/images/kep_toc_caocap.jpeg",
-      price: "150.000đ",
-      rating: 4,
-      reviews: 12,
-      description:
-        "Kẹp tóc cao cấp với thiết kế sang trọng, phù hợp cho mọi dịp. Chất liệu an toàn, không gây hại cho tóc.",
-      isNew: true,
-    },
-    {
-      id: 2,
-      name: "Dây buộc tóc lụa",
-      image: "/images/day_buoc_toc_lua.jpeg",
-      price: "89.000đ",
-      rating: 5,
-      reviews: 8,
-      description:
-        "Dây buộc tóc làm từ lụa cao cấp, mềm mại và không làm hư tóc.",
-      isNew: false,
-    },
-    {
-      id: 3,
-      name: "Băng đô thời trang",
-      image: "/images/bang_do.png",
-      price: "120.000đ",
-      rating: 4,
-      reviews: 15,
-      description:
-        "Băng đô thiết kế thời trang, phù hợp cho nhiều kiểu tóc khác nhau.",
-      isNew: true,
-    },
-  ];
-
+  const products = useCrud("products", {
+    fetchData: productSlice.fetchData,
+  });
+  const getProducts = (products.single?.data.items as IObj[]) ?? [];
   const feedbacks = [
     {
       id: 1,
@@ -95,26 +66,7 @@ const Intro = () => {
       image: "/images/party.jpeg",
     },
   ];
-  const collections = [
-    {
-      id: 1,
-      name: "Bộ sưu tập mùa hè",
-      image: "/images/summer.jpeg",
-      description: "Những phụ kiện tóc mát mẻ, phù hợp cho mùa hè",
-    },
-    {
-      id: 2,
-      name: "Bộ sưu tập công sở",
-      image: "/images/office_accessories.jpeg",
-      description: "Phụ kiện tóc thanh lịch, chuyên nghiệp",
-    },
-    {
-      id: 3,
-      name: "Bộ sưu tập dự tiệc",
-      image: "/images/party_acces.jpeg",
-      description: "Những phụ kiện tóc sang trọng, quý phái",
-    },
-  ];
+
   const blogPosts = [
     {
       id: 1,
@@ -138,6 +90,12 @@ const Intro = () => {
       content: "Chi tiết về cách chọn phụ kiện tóc...",
     },
   ];
+  useEffect(() => {
+    products.fetch({
+      page: 1,
+      limit: 10,
+    });
+  }, []);
   return (
     <div className="space-y-20 py-12">
       {/* Store Info Section */}
@@ -193,62 +151,23 @@ const Intro = () => {
               Sản phẩm nổi bật
             </Title>
           </motion.div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {products.map((product, index) => (
-              <motion.div
-                key={product.id}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
-                <Card
-                  hoverable
-                  className="shadow-md"
-                  cover={
-                    <div className="relative aspect-square overflow-hidden">
-                      <img
-                        alt={product.name}
-                        src={product.image}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                      />
-                      <div className="absolute top-2 right-2 bg-white/80 backdrop-blur-sm rounded-full px-3 py-1 text-sm font-medium">
-                        Mới
-                      </div>
-                    </div>
-                  }
+          {products.loading.fetch || !products.single ? (
+            <ProductsLoading total={3} className="xl:!grid-cols-3" />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {(getProducts.slice(0, 3) as IObj[]).map((product, index) => (
+                <motion.div
+                  key={product._id}
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
                 >
-                  <div className="space-y-3">
-                    <h3 className="text-xl font-semibold">{product.name}</h3>
-                    <div className="flex items-center gap-2">
-                      <Rate disabled defaultValue={4} className="text-sm" />
-                      <span className="text-gray-500 text-sm">
-                        (12 đánh giá)
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-primary-600 font-bold text-xl">
-                        {product.price}
-                      </span>
-                      <Button
-                        type="primary"
-                        className="bg-primary-600 hover:bg-primary-700 flex items-center gap-2"
-                      >
-                        <ShoppingCartOutlined />
-                        Thêm vào giỏ
-                      </Button>
-                    </div>
-                    <div className="text-gray-600">
-                      <p className="line-clamp-2">
-                        Kẹp tóc cao cấp với thiết kế sang trọng, phù hợp cho mọi
-                        dịp. Chất liệu an toàn, không gây hại cho tóc.
-                      </p>
-                    </div>
-                  </div>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
+                  <ProductCard product={product} />
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

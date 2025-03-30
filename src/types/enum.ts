@@ -1,6 +1,7 @@
 export enum LocalStorage {
   access_token = "access_token",
   checkout_products = "checkout_products",
+  callBackUrl = "callBackUrl",
 }
 export enum UserRole {
   ADMIN = "admin",
