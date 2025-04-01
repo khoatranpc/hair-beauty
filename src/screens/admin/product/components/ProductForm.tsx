@@ -124,7 +124,6 @@ const ProductForm: React.FC<ProductFormProps> = ({ form, handleModal }) => {
     </button>
   );
   const handleSubmit = (values: IObj) => {
-    console.log(values);
     if (!id) {
       const formData = new FormData();
       if (values.images.fileList.length) {

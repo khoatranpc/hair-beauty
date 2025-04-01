@@ -34,3 +34,8 @@ export enum PaymentStatus {
   PAID = "paid",
   FAILED = "failed",
 }
+
+export enum TypeOfCategory {
+  product = "product",
+  blog = "blog",
+}

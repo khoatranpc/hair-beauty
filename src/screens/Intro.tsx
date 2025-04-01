@@ -2,11 +2,8 @@
 import React, { useEffect } from "react";
 import { Button, Card, Rate, Typography } from "antd";
 import { motion } from "framer-motion";
-import {
-  StarOutlined,
-  ToolOutlined,
-  ShoppingCartOutlined,
-} from "@ant-design/icons";
+import { StarOutlined, ToolOutlined } from "@ant-design/icons";
+import { useRouter } from "next/navigation";
 import { useCrud } from "@/hooks/useCrud";
 import { productSlice } from "@/store/reducers/product";
 import { IObj } from "@/types/types";
@@ -19,6 +16,7 @@ const Intro = () => {
   const products = useCrud("products", {
     fetchData: productSlice.fetchData,
   });
+  const router = useRouter();
   const getProducts = (products.single?.data.items as IObj[]) ?? [];
   const feedbacks = [
     {
@@ -117,7 +115,14 @@ const Intro = () => {
                 mẫu mã đa dạng và phong phú. Chúng tôi cam kết mang đến trải
                 nghiệm mua sắm tốt nhất cho khách hàng.
               </Paragraph>
-              <Button type="primary" size="large" className="bg-primary-600">
+              <Button
+                type="primary"
+                size="large"
+                className="bg-primary-600"
+                onClick={() => {
+                  router.push("/products");
+                }}
+              >
                 Khám phá ngay
               </Button>
             </div>

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Layout, Menu, Button, theme, Avatar, Dropdown } from "antd";
 import {
   MenuFoldOutlined,
@@ -8,18 +8,19 @@ import {
   ShoppingOutlined,
   UserOutlined,
   ShopOutlined,
-  TagOutlined,
-  GiftOutlined,
   TeamOutlined,
   SettingOutlined,
   LogoutOutlined,
   BellOutlined,
+  DatabaseOutlined,
 } from "@ant-design/icons";
 import { usePathname, useRouter } from "next/navigation";
 import { ItemType, MenuItemType } from "antd/es/menu/interface";
 import Link from "next/link";
 import { removeLocalStorage } from "@/utils";
 import { LocalStorage } from "@/types/enum";
+import { useCrud } from "@/hooks/useCrud";
+import { shopSlice } from "@/store/reducers/shop";
 
 const { Header, Sider, Content } = Layout;
 
@@ -27,6 +28,9 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const [collapsed, setCollapsed] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const shop = useCrud("shop", {
+    fetchData: shopSlice.fetchData,
+  });
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
@@ -78,9 +82,16 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     //   ],
     // },
     {
-      key: "/admin/settings",
+      key: "/settings",
       icon: <SettingOutlined />,
       label: "Cài đặt",
+      children: [
+        {
+          key: "/settings/shop",
+          label: <Link href={"/settings/shop"}>Cửa hàng</Link>,
+          icon: <DatabaseOutlined />,
+        },
+      ],
     },
   ];
 
@@ -100,7 +111,11 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
       },
     },
   ];
-
+  useEffect(() => {
+    if (!shop.single?.data && !shop.fetched.fetch) {
+      shop.fetch();
+    }
+  }, []);
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider trigger={null} collapsible collapsed={collapsed} theme="light">

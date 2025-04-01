@@ -53,7 +53,7 @@ export const OrderDetail = () => {
   );
 
   const orderData = orders.single?.data ?? {};
-
+  const histories = orderData?.history || [];
   const currentStep = orderData?.status
     ? Object.values(OrderStatus).indexOf(orderData.status)
     : 0;
@@ -232,13 +232,22 @@ export const OrderDetail = () => {
 
       <Card title="Lịch sử đơn hàng">
         <Timeline
+          mode="left"
+          className="max-w-[300px]"
           items={[
             {
               color: "green",
-              children: `Đặt hàng - ${new Date(
-                orderData?.createdAt
-              ).toLocaleString("vi-VN")}`,
+              children: `Đặt hàng`,
+              label: new Date(orderData?.createdAt).toLocaleString("vi-VN"),
             },
+            ...histories.map((history: any) => {
+              return {
+                color: "green",
+                children: `${orderStatusString[history.status as OrderStatus]}`,
+                label: new Date(history.updatedAt).toLocaleString("vi-VN"),
+                
+              };
+            }),
             // Add more timeline items based on order history
           ]}
         />

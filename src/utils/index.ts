@@ -1,4 +1,4 @@
-import { LocalStorage, OrderStatus } from "@/types/enum";
+import { LocalStorage, OrderStatus, TypeOfCategory } from "@/types/enum";
 
 export const saveLocalStorage = (key: LocalStorage, value: string) => {
   if (typeof window !== "undefined") {
@@ -21,4 +21,9 @@ export const orderStatusString: Record<OrderStatus, string> = {
   confirmed: "Đã xác nhận",
   shipping: "Đang giao hàng",
   delivered: "Đã giao hàng",
+};
+
+export const getTypeOfCategoryString: Record<TypeOfCategory, string> = {
+  blog: "Bài viết",
+  product: "Sản phẩm",
 };

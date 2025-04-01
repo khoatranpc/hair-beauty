@@ -2,6 +2,7 @@ import React from "react";
 import { Form, Input, Switch } from "antd";
 import SelectCategories from "@/components/SelectCategories";
 import slugify from "slugify";
+import SelectTypeOfCategory from "@/components/SelectTypeOfCategory";
 
 interface CategoryFormProps {
   form: any;
@@ -39,6 +40,9 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ form, handleSubmit }) => {
         <Input />
       </Form.Item>
 
+      <Form.Item name="type" label="Loại danh mục">
+        <SelectTypeOfCategory />
+      </Form.Item>
       <Form.Item name="description" label="Mô tả">
         <Input.TextArea rows={4} />
       </Form.Item>

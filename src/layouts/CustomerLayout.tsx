@@ -8,6 +8,7 @@ import {
   SearchOutlined,
   DatabaseOutlined,
 } from "@ant-design/icons";
+import parsePhoneNumber from "libphonenumber-js";
 import { Drawer, Button } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
 import { Dropdown } from "antd";
@@ -19,6 +20,7 @@ import { userProfileSlice } from "@/store/reducers/user";
 import { removeLocalStorage } from "@/utils";
 import { LocalStorage, UserRole } from "@/types/enum";
 import { cartSlice } from "@/store/reducers/cart";
+import { shopSlice } from "@/store/reducers/shop";
 
 const { Header, Content, Footer } = Layout;
 
@@ -49,7 +51,10 @@ const CustomerLayout = ({ children }: { children: React.ReactNode }) => {
       },
     }
   );
-
+  const shop = useCrud("shop", {
+    fetchData: shopSlice.fetchData,
+  });
+  const getShopInfor = shop.single?.data as IObj;
   const getUserProfile = userProfile.single?.data as IObj;
   const navItems = [
     {
@@ -99,7 +104,7 @@ const CustomerLayout = ({ children }: { children: React.ReactNode }) => {
 
   const navMenu = (
     <Menu>
-      {navItems.map((item) => (
+      {navItems.slice(2, navItems.length).map((item) => (
         <Menu.Item key={item.key}>
           <Link href={item.href} className="text-gray-700">
             {item.label}
@@ -108,9 +113,22 @@ const CustomerLayout = ({ children }: { children: React.ReactNode }) => {
       ))}
     </Menu>
   );
+  const getPhoneNumber = () => {
+    if (getShopInfor?.phone) {
+      const parsedNumber = parsePhoneNumber(
+        getShopInfor?.phone as string,
+        "VN"
+      )?.formatInternational();
+      return parsedNumber;
+    }
+    return "";
+  };
   useEffect(() => {
     if (!getUserProfile) {
       userProfile.fetch();
+    }
+    if (!getShopInfor) {
+      shop.fetch();
     }
   }, []);
   return (
@@ -351,15 +369,15 @@ const CustomerLayout = ({ children }: { children: React.ReactNode }) => {
               <ul className="space-y-3 text-gray-400 text-sm md:text-base">
                 <li className="flex items-start gap-2">
                   <i className="fas fa-map-marker-alt text-primary-500 mt-1"></i>
-                  <span>123 Đường ABC, Quận 1, TP.HCM</span>
+                  <span>{getShopInfor?.address}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <i className="fas fa-phone text-primary-500 mt-1"></i>
-                  <span>(+84) 123 456 789</span>
+                  <span>{getPhoneNumber()}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <i className="fas fa-envelope text-primary-500 mt-1"></i>
-                  <span>info@hairbeauty.com</span>
+                  <span>{getShopInfor?.email}</span>
                 </li>
               </ul>
             </div>

@@ -1,14 +1,25 @@
 "use client";
 import React from "react";
 import { Button, Form, Input, message } from "antd";
-import { PhoneOutlined, MailOutlined, EnvironmentOutlined } from "@ant-design/icons";
+import {
+  PhoneOutlined,
+  MailOutlined,
+  EnvironmentOutlined,
+} from "@ant-design/icons";
 import { motion } from "framer-motion";
+import { useCrud } from "@/hooks/useCrud";
+import { shopSlice } from "@/store/reducers/shop";
+import { IObj } from "@/types/types";
+import parsePhoneNumber from "libphonenumber-js";
 
 const { TextArea } = Input;
 
 const Contact = () => {
   const [form] = Form.useForm();
-
+  const shop = useCrud("shop", {
+    fetchData: shopSlice.fetchData,
+  });
+  const getShopInfor = shop.single?.data as IObj;
   const onFinish = (values: any) => {
     console.log("Received values:", values);
     message.success("Cảm ơn bạn! Chúng tôi sẽ liên hệ lại sớm nhất có thể.");
@@ -55,7 +66,9 @@ const Contact = () => {
             <Form.Item
               name="name"
               label="Họ và tên"
-              rules={[{ required: true, message: "Vui lòng nhập tên của bạn!" }]}
+              rules={[
+                { required: true, message: "Vui lòng nhập tên của bạn!" },
+              ]}
             >
               <Input placeholder="Nhập họ và tên" />
             </Form.Item>
@@ -113,12 +126,7 @@ const Contact = () => {
                 <EnvironmentOutlined className="text-2xl text-primary-600" />
                 <div>
                   <h3 className="font-medium text-lg">Địa chỉ cửa hàng</h3>
-                  <p className="text-gray-600">
-                    123 Đường ABC, Phường XYZ, Quận 1, TP.HCM
-                  </p>
-                  <p className="text-gray-500 text-sm mt-1">
-                    (Gần trung tâm thương mại XYZ, đối diện công viên ABC)
-                  </p>
+                  <p className="text-gray-600">{getShopInfor?.address}</p>
                 </div>
               </div>
 
@@ -126,9 +134,17 @@ const Contact = () => {
                 <PhoneOutlined className="text-2xl text-primary-600" />
                 <div>
                   <h3 className="font-medium text-lg">Điện thoại</h3>
-                  <p className="text-gray-600">(+84) 123 456 789</p>
+                  <p className="text-gray-600">
+                    {getShopInfor?.phone
+                      ? parsePhoneNumber(
+                          getShopInfor?.phone as string,
+                          "VN"
+                        )?.formatInternational()
+                      : ""}
+                  </p>
                   <p className="text-gray-500 text-sm mt-1">
-                    (Hotline: 8:00 - 21:00 hàng ngày)
+                    (Hotline: {getShopInfor?.businessHours?.open} -{" "}
+                    {getShopInfor?.businessHours?.close} hàng ngày)
                   </p>
                 </div>
               </div>
@@ -137,27 +153,27 @@ const Contact = () => {
                 <MailOutlined className="text-2xl text-primary-600" />
                 <div>
                   <h3 className="font-medium text-lg">Email & Mạng xã hội</h3>
-                  <p className="text-gray-600">info@hair-accessories.com</p>
+                  <p className="text-gray-600"> {getShopInfor?.email}</p>
                   <div className="flex space-x-4 mt-2">
-                    <a href="#" className="text-gray-500 hover:text-primary-600">
+                    <a
+                      href="#"
+                      className="text-gray-500 hover:text-primary-600"
+                    >
                       <i className="fab fa-facebook text-xl"></i>
                     </a>
-                    <a href="#" className="text-gray-500 hover:text-primary-600">
+                    <a
+                      href="#"
+                      className="text-gray-500 hover:text-primary-600"
+                    >
                       <i className="fab fa-instagram text-xl"></i>
                     </a>
-                    <a href="#" className="text-gray-500 hover:text-primary-600">
+                    <a
+                      href="#"
+                      className="text-gray-500 hover:text-primary-600"
+                    >
                       <i className="fab fa-youtube text-xl"></i>
                     </a>
                   </div>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-4">
-                <i className="fas fa-clock text-2xl text-primary-600"></i>
-                <div>
-                  <h3 className="font-medium text-lg">Giờ mở cửa</h3>
-                  <p className="text-gray-600">Thứ 2 - Thứ 7: 8:00 - 21:00</p>
-                  <p className="text-gray-600">Chủ nhật: 9:00 - 18:00</p>
                 </div>
               </div>
             </div>

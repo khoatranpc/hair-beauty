@@ -3,6 +3,8 @@ import { Table, Tag, Button, Space, Tooltip } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { IObj } from "@/types/types";
 import type { ColumnsType } from "antd/es/table";
+import { getTypeOfCategoryString } from "@/utils";
+import { TypeOfCategory } from "@/types/enum";
 
 interface CategoryTableProps {
   data: IObj[];
@@ -18,7 +20,6 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
   loading,
   total,
   onEdit,
-  onDelete,
   onPaginationChange,
 }) => {
   const columns: ColumnsType = [
@@ -37,6 +38,14 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
       dataIndex: "description",
       key: "description",
       ellipsis: true,
+    },
+    {
+      title: "Loại danh mục",
+      dataIndex: "type",
+      key: "type",
+      render(type) {
+        return getTypeOfCategoryString[type as TypeOfCategory];
+      },
     },
     {
       title: "Trạng thái",
