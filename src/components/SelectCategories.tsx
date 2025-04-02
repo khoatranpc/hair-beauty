@@ -2,10 +2,12 @@ import React, { useEffect, useState, useMemo } from "react";
 import { Select, SelectProps } from "antd";
 import axiosInstance from "@/api/axiosConfig";
 import { IObj } from "@/types/types";
+import { TypeOfCategory } from "@/types/enum";
 
 interface SelectCategoriesProps extends Omit<SelectProps, "options"> {
   value?: string[];
   onChange?: (value: string[]) => void;
+  type?: TypeOfCategory;
 }
 
 const SelectCategories: React.FC<SelectCategoriesProps> = ({
@@ -24,6 +26,7 @@ const SelectCategories: React.FC<SelectCategoriesProps> = ({
       const response = await axiosInstance.get("/api/v1/categories", {
         params: {
           isGetAll: true,
+          type: props.type,
         },
       });
       const items = response.data.data as IObj[];
@@ -53,9 +56,9 @@ const SelectCategories: React.FC<SelectCategoriesProps> = ({
     <Select
       mode="multiple"
       allowClear
-      style={{ width: "100%", }}
+      style={{ width: "100%" }}
       placeholder="Chọn danh mục"
-      defaultValue={value}
+      value={value}
       onChange={onChange}
       options={filteredOptions}
       loading={loading}

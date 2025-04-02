@@ -45,7 +45,6 @@ const Shop = () => {
         ...values,
         businessHours: getBusinessHours,
       };
-      console.log(shop.single);
       if (!shop.single?.data?._id) {
         shop.create(getPayload);
       } else {

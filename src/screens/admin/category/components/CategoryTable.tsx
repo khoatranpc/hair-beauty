@@ -53,7 +53,7 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
       key: "isActive",
       render: (isActive) => (
         <Tag color={isActive ? "success" : "error"}>
-          {isActive ? "Đang bán" : "Ngừng bán"}
+          {isActive ? "Đang mở" : "Ngừng"}
         </Tag>
       ),
     },

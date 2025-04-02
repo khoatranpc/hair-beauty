@@ -55,7 +55,6 @@ const UploadImages: React.FC<UploadImagesProps> = ({
     }
 
     setFileList(newFileList);
-
     if (file.status === "done") {
       try {
         const formData = new FormData();

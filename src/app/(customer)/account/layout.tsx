@@ -1,11 +1,11 @@
 "use client";
 import React, { useEffect } from "react";
+import { Loading3QuartersOutlined } from "@ant-design/icons";
 import { redirect } from "next/navigation";
 import { useCrud } from "@/hooks/useCrud";
 import { userProfileSlice } from "@/store/reducers/user";
 import { LocalStorage } from "@/types/enum";
 import { getLocalStorage, removeLocalStorage } from "@/utils";
-import { Loading3QuartersOutlined } from "@ant-design/icons";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const userProfile = useCrud("userProfile", {
@@ -18,7 +18,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       userProfile.fetch();
     }
   }, []);
-  if (getAccessToken && !userProfile.single)
+  if (getAccessToken && !userProfile.single && !userProfile.error.fetch)
     return <Loading3QuartersOutlined className="animate-spin" />;
   if (userProfile.error.fetch) {
     removeLocalStorage(LocalStorage.access_token);

@@ -10,6 +10,7 @@ import { uploadImagesSlice } from "./reducers/upload";
 import { cartSlice } from "./reducers/cart";
 import { orderSlice } from "./reducers/order";
 import { shopSlice } from "./reducers/shop";
+import { blogSlice } from "./reducers/blog";
 
 export const store = configureStore({
   reducer: {
@@ -23,6 +24,7 @@ export const store = configureStore({
     cart: cartSlice.slice.reducer,
     orders: orderSlice.slice.reducer,
     shop: shopSlice.slice.reducer,
+    blogs: blogSlice.slice.reducer,
   },
 });
 

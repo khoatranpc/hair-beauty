@@ -91,7 +91,6 @@ const ProductForm: React.FC<ProductFormProps> = ({ form, handleModal }) => {
                 .getFieldValue("images")
                 .fileList.filter((img: UploadFile) => img.url)
                 .map((img: UploadFile) => img.url);
-              console.log("first");
               products.update(product._id, {
                 ...form.getFieldsValue(),
                 slug: product.slug as string,

@@ -3,13 +3,19 @@ import { Form, Input, Switch } from "antd";
 import SelectCategories from "@/components/SelectCategories";
 import slugify from "slugify";
 import SelectTypeOfCategory from "@/components/SelectTypeOfCategory";
+import { TypeOfCategory } from "@/types/enum";
 
 interface CategoryFormProps {
   form: any;
   handleSubmit: any;
+  type?: TypeOfCategory;
 }
 
-const CategoryForm: React.FC<CategoryFormProps> = ({ form, handleSubmit }) => {
+const CategoryForm: React.FC<CategoryFormProps> = ({
+  form,
+  handleSubmit,
+  type,
+}) => {
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.target.value;
     const slug = slugify(name, { lower: true, locale: "vi" });
@@ -41,14 +47,14 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ form, handleSubmit }) => {
       </Form.Item>
 
       <Form.Item name="type" label="Loại danh mục">
-        <SelectTypeOfCategory />
+        <SelectTypeOfCategory optionType="button" />
       </Form.Item>
       <Form.Item name="description" label="Mô tả">
         <Input.TextArea rows={4} />
       </Form.Item>
 
       <Form.Item name="parentCategories" label="Danh mục cha">
-        <SelectCategories />
+        <SelectCategories type={type} />
       </Form.Item>
 
       <Form.Item name="isActive" label="Trạng thái" valuePropName="checked">

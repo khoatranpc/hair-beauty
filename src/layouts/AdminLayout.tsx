@@ -13,6 +13,7 @@ import {
   LogoutOutlined,
   BellOutlined,
   DatabaseOutlined,
+  FileWordOutlined,
 } from "@ant-design/icons";
 import { usePathname, useRouter } from "next/navigation";
 import { ItemType, MenuItemType } from "antd/es/menu/interface";
@@ -62,9 +63,24 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
       label: <Link href={"/orders/list"}>Đơn hàng</Link>,
     },
     {
-      key: "/admin/customers",
+      key: "/customers",
       icon: <TeamOutlined />,
       label: "Khách hàng",
+    },
+    {
+      key: "/blogs",
+      icon: <FileWordOutlined />,
+      label: "Bài viết",
+      children: [
+        {
+          key: "/blogs/list",
+          label: <Link href={"/blogs/list"}>Danh sách</Link>,
+        },
+        {
+          key: "/blogs/categories",
+          label: <Link href={"/blogs/categories"}>Danh mục</Link>,
+        },
+      ],
     },
     // {
     //   key: "/admin/promotions",

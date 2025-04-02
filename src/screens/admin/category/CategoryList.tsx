@@ -13,16 +13,20 @@ import { toast } from "react-toastify";
 import { IObj } from "@/types/types";
 import CategoryTable from "./components/CategoryTable";
 import CategoryForm from "./components/CategoryForm";
+import { TypeOfCategory } from "@/types/enum";
 
 interface FilterState {
   search: string;
   isActive?: boolean;
 }
-
-const CategoryList = () => {
+interface Props {
+  type?: TypeOfCategory;
+}
+const CategoryList = (props: Props) => {
   const [filters, setFilters] = useState<FilterState>({
     search: "",
     isActive: undefined,
+    ...(props.type ? { type: props.type } : {}),
   });
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -130,8 +134,18 @@ const CategoryList = () => {
             value={filters.isActive}
             onChange={handleStatusChange}
             options={[
-              { label: "Đang bán", value: true },
-              { label: "Ngừng bán", value: false },
+              {
+                label:
+                  props.type === TypeOfCategory.product
+                    ? "Đang bán"
+                    : "Đang mở",
+                value: true,
+              },
+              {
+                label:
+                  props.type === TypeOfCategory.product ? "Ngừng bán" : "Ngừng",
+                value: false,
+              },
             ]}
           />
         </Space>
@@ -187,7 +201,11 @@ const CategoryList = () => {
         cancelText="Hủy"
         destroyOnClose
       >
-        <CategoryForm form={form} handleSubmit={handleSubmit} />
+        <CategoryForm
+          type={props.type}
+          form={form}
+          handleSubmit={handleSubmit}
+        />
       </Modal>
     </Card>
   );

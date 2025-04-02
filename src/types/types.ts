@@ -37,3 +37,25 @@ export interface IShop {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface IBlog {
+  _id?: string;
+  title: string;
+  slug: string;
+  content: string;
+  thumbnail?: string;
+  description?: string;
+  categories: Array<string | IObj | any>;
+  tags?: string[];
+  isPublished: boolean;
+  viewCount: number;
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+    keywords?: string[];
+  };
+  publishedAt?: Date;
+  author: string | IObj | any;
+  createdAt: Date;
+  updatedAt: Date;
+}

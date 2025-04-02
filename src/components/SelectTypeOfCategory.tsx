@@ -1,21 +1,19 @@
 import { TypeOfCategory } from "@/types/enum";
 import { getTypeOfCategoryString } from "@/utils";
-import { Checkbox } from "antd";
-import { CheckboxGroupProps } from "antd/es/checkbox";
+import { Radio } from "antd";
+import { RadioGroupProps } from "antd/es/radio";
 import React from "react";
 
-interface Props extends CheckboxGroupProps {}
+interface Props extends RadioGroupProps {}
 const SelectTypeOfCategory = (props: Props) => {
   return (
-    <Checkbox.Group {...props}>
-      {Object.entries(TypeOfCategory).map(([key, value]) => {
-        return (
-          <Checkbox key={key} value={value}>
-            {getTypeOfCategoryString[value]}
-          </Checkbox>
-        );
-      })}
-    </Checkbox.Group>
+    <Radio.Group {...props}>
+      {Object.entries(TypeOfCategory).map(([key, value]) => (
+        <Radio key={key} value={value}>
+          {getTypeOfCategoryString[value]}
+        </Radio>
+      ))}
+    </Radio.Group>
   );
 };
 

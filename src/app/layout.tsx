@@ -11,6 +11,7 @@ export const metadata: Metadata = {
 import { ConfigProvider } from "antd";
 import theme from "@/theme/themeConfig";
 import StoreProvider from "@/store/StoreProvider";
+import "react-quill-new/dist/quill.snow.css";
 import "./globals.css";
 
 export default function RootLayout({
