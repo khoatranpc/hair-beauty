@@ -1,8 +1,9 @@
-import { redirect } from 'next/navigation'
-import React from 'react'
+"use client";
+import React from "react";
+import { redirect } from "next/navigation";
 
 const page = () => {
-    redirect('/dashboard');
-}
+  redirect("/dashboard");
+};
 
-export default page
+export default page;
