@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 
-
 export const metadata: Metadata = {
   title: "Hair Accessories Shop",
   description: "Shop phụ kiện tóc chất lượng cao",
   icons: "/images/logo.png",
 };
 
+import { Suspense } from "react";
 import { ConfigProvider } from "antd";
 import theme from "@/theme/themeConfig";
 import StoreProvider from "@/store/StoreProvider";
@@ -25,7 +25,7 @@ export default function RootLayout({
         <ConfigProvider theme={theme}>
           <AntdRegistry>
             <StoreProvider>
-              {children}
+              <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
             </StoreProvider>
           </AntdRegistry>
         </ConfigProvider>

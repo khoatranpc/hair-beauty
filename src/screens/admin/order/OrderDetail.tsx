@@ -19,7 +19,7 @@ import { LocalStorage, OrderStatus } from "@/types/enum";
 import { getLocalStorage, orderStatusString } from "@/utils";
 import { mapStatusToColor } from "@/screens/orders/Orders";
 
-export const OrderDetail = () => {
+const OrderDetail = () => {
   const { slug } = useParams();
   const router = useRouter();
   const orders = useCrud(
@@ -245,7 +245,6 @@ export const OrderDetail = () => {
                 color: "green",
                 children: `${orderStatusString[history.status as OrderStatus]}`,
                 label: new Date(history.updatedAt).toLocaleString("vi-VN"),
-                
               };
             }),
             // Add more timeline items based on order history
@@ -255,3 +254,5 @@ export const OrderDetail = () => {
     </div>
   );
 };
+
+export default OrderDetail;

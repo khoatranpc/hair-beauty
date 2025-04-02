@@ -1,18 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import {
-  Badge,
-  Button,
-  Card,
-  Descriptions,
-  Drawer,
-  Table,
-  Tag,
-  Timeline,
-  Select,
-  message,
-  Tooltip,
-} from "antd";
+import React, { Suspense, useEffect, useState } from "react";
+import { Button, Card, Table, Tag, Tooltip } from "antd";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCrud } from "@/hooks/useCrud";
 import { orderSlice } from "@/store/reducers/order";
@@ -162,7 +150,7 @@ const OrderList = () => {
     orders.fetch({
       params: filters,
     });
-    let params = new URLSearchParams();
+    const params = new URLSearchParams();
     Object.keys(filters).forEach((key) => {
       if (filters[key]) {
         params.set(key, filters[key]);

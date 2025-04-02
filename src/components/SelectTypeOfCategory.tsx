@@ -4,7 +4,9 @@ import { Radio } from "antd";
 import { RadioGroupProps } from "antd/es/radio";
 import React from "react";
 
-interface Props extends RadioGroupProps {}
+interface Props extends RadioGroupProps {
+  key?: string;
+}
 const SelectTypeOfCategory = (props: Props) => {
   return (
     <Radio.Group {...props}>

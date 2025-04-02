@@ -37,9 +37,11 @@ const Checkout = () => {
       },
     }
   );
-  const getCheckoutProducts = JSON.parse(
-    getLocalStorage(LocalStorage.checkout_products) as string
-  );
+  const getCheckoutProducts = (getLocalStorage(
+    LocalStorage.checkout_products
+  ) as string)
+    ? JSON.parse(getLocalStorage(LocalStorage.checkout_products) as string)
+    : [];
   const products = getCheckoutProducts?.map((_id: string) => {
     return (getCart.items?.items as IObj[])?.find((item: IObj) => {
       if (item.product._id === _id) {
