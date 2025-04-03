@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://hair-beauty.vercel.app/
+
+# Sitemaps
+Sitemap: https://hair-beauty.vercel.app/sitemap.xml
