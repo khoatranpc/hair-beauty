@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useCrud } from "@/hooks/useCrud";
 import { blogSlice } from "@/store/reducers/blog";
 import { IBlog } from "@/types/types";
+import { Empty } from "antd"; // Add this import
 
 import {
   EyeOutlined,
@@ -35,6 +36,24 @@ const PostDetail = () => {
     return (
       <div className="container mx-auto px-4 py-8">
         <Skeleton active avatar paragraph={{ rows: 4 }} />
+      </div>
+    );
+  }
+
+  if ((!post && blogs.fetched.fetch) || !post._id) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Empty
+          description={
+            <div>
+              <p>Bài viết không tồn tại</p>
+              <Link href="/posts">
+                <p>Quay lại danh sách bài viết</p>
+              </Link>
+            </div>
+          }
+          className="py-12"
+        />
       </div>
     );
   }
