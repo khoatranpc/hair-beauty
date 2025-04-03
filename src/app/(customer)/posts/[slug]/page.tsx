@@ -1,7 +1,8 @@
 import React from "react";
+import PostDetail from "@/screens/posts/PostDetail";
 
 const page = () => {
-  return <div>page</div>;
+  return <PostDetail />;
 };
 
 export default page;
