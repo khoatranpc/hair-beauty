@@ -9,6 +9,8 @@ import { productSlice } from "@/store/reducers/product";
 import { IObj } from "@/types/types";
 import ProductCard from "@/components/ProductCard";
 import ProductsLoading from "@/components/ProductsLoading";
+import SectionShareTypesIntro from "@/components/SectionShareTypesIntro";
+import SectionNewsIntro from "@/components/SectionNewsIntro";
 
 const { Title, Paragraph } = Typography;
 
@@ -48,46 +50,6 @@ const Intro = () => {
     },
   ];
 
-  const hairTips = [
-    {
-      id: 1,
-      title: "Kiểu tóc công sở",
-      description: "Các kiểu tóc phù hợp cho môi trường công sở",
-      tools: ["Kẹp tóc", "Dây buộc", "Gương mini"],
-      image: "/images/offstyles.jpeg",
-    },
-    {
-      id: 2,
-      title: "Kiểu tóc dự tiệc",
-      description: "Những kiểu tóc sang trọng cho các buổi tiệc",
-      tools: ["Băng đô", "Kẹp đính đá", "Phụ kiện trang trí"],
-      image: "/images/party.jpeg",
-    },
-  ];
-
-  const blogPosts = [
-    {
-      id: 1,
-      title: "Xu hướng phụ kiện tóc 2023",
-      excerpt: "Khám phá những xu hướng phụ kiện tóc nổi bật nhất năm 2023",
-      image: "/images/news.png",
-      content: "Chi tiết về các xu hướng phụ kiện tóc...",
-    },
-    {
-      id: 2,
-      title: "5 cách chăm sóc tóc tại nhà",
-      excerpt: "Những bí quyết chăm sóc tóc đơn giản mà hiệu quả",
-      image: "/images/news.png",
-      content: "Hướng dẫn chi tiết cách chăm sóc tóc...",
-    },
-    {
-      id: 3,
-      title: "Cách chọn phụ kiện tóc phù hợp",
-      excerpt: "Hướng dẫn chọn phụ kiện tóc theo khuôn mặt và phong cách",
-      image: "/images/news.png",
-      content: "Chi tiết về cách chọn phụ kiện tóc...",
-    },
-  ];
   useEffect(() => {
     products.fetch({
       page: 1,
@@ -143,7 +105,6 @@ const Intro = () => {
         </motion.div>
       </section>
 
-      {/* Products Section */}
       <section className="bg-gray-50 py-16">
         <div className="container mx-auto px-4">
           <motion.div
@@ -175,8 +136,8 @@ const Intro = () => {
           )}
         </div>
       </section>
-
-      {/* Feedback Section */}
+      <SectionShareTypesIntro />
+      <SectionNewsIntro />
       <section className="container mx-auto px-4 py-16">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
@@ -248,119 +209,6 @@ const Intro = () => {
           ))}
         </div>
       </section>
-
-      <section className="bg-gradient-to-b from-primary-50 to-white py-16">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <Title level={2} className="!text-3xl !font-bold mb-4">
-              Gợi ý phong cách
-            </Title>
-            <Paragraph className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Khám phá các phong cách làm tóc phù hợp với từng dịp và cách chọn
-              phụ kiện phù hợp
-            </Paragraph>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {hairTips.map((tip: any) => (
-              <motion.div
-                key={tip.id}
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.3 }}
-              >
-                <Card
-                  className="h-full shadow-lg border-none overflow-hidden"
-                  cover={
-                    <div className="relative h-56">
-                      <img
-                        alt={tip.title}
-                        src={tip.image}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                    </div>
-                  }
-                >
-                  <div className="p-6">
-                    <Title level={4} className="!text-xl !font-bold mb-4">
-                      {tip.title}
-                    </Title>
-                    <Paragraph className="text-gray-600 mb-4">
-                      {tip.description}
-                    </Paragraph>
-                    <div className="mb-6">
-                      <Title
-                        level={5}
-                        className="!text-base !font-semibold mb-2"
-                      >
-                        Công cụ cần thiết:
-                      </Title>
-                      <div className="flex flex-wrap gap-2">
-                        {tip.tools.map((tool: any, index: number) => (
-                          <span
-                            key={index}
-                            className="bg-primary-50 text-primary-600 px-3 py-1 rounded-full text-sm"
-                          >
-                            {tool}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    <Button
-                      type="primary"
-                      className="bg-primary-600 hover:bg-primary-700 w-full flex items-center justify-center gap-2"
-                    >
-                      <ToolOutlined />
-                      Xem chi tiết
-                    </Button>
-                  </div>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-      <section className="bg-gray-50 py-16">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <Title level={2} className="!text-3xl !font-bold mb-4">
-              Tin tức & Mẹo làm đẹp
-            </Title>
-            <Paragraph className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Cập nhật những xu hướng làm đẹp mới nhất và các mẹo chăm sóc tóc
-            </Paragraph>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {blogPosts.map((post) => (
-              <motion.div
-                key={post.id}
-                whileHover={{ y: -10 }}
-                transition={{ duration: 0.3 }}
-              >
-                <Card
-                  className="h-full shadow-md"
-                  cover={
-                    <img
-                      alt={post.title}
-                      src={post.image}
-                      className="h-48 w-full object-cover"
-                    />
-                  }
-                >
-                  <div className="p-6">
-                    <h3 className="text-xl font-semibold mb-3">{post.title}</h3>
-                    <p className="text-gray-600 mb-4 line-clamp-3">
-                      {post.excerpt}
-                    </p>
-                    <Button type="link" className="p-0">
-                      Đọc thêm
-                    </Button>
-                  </div>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
       <section className="bg-primary-600 py-20">
         <div className="container mx-auto px-4 text-center">
           <Title level={2} className="!text-3xl !font-bold text-white mb-6">
@@ -375,6 +223,9 @@ const Intro = () => {
               type="primary"
               size="large"
               className="bg-white text-primary-600 hover:bg-gray-100"
+              onClick={() => {
+                router.push("/products");
+              }}
             >
               Mua ngay
             </Button>
@@ -382,6 +233,9 @@ const Intro = () => {
               type="primary"
               size="large"
               className="bg-transparent border-white text-white hover:bg-white/10"
+              onClick={() => {
+                router.push("/contact");
+              }}
             >
               Liên hệ tư vấn
             </Button>

@@ -2,7 +2,7 @@
 import React from "react";
 import dayjs from "dayjs";
 import { Card, Tag, Skeleton, Avatar, Divider, Breadcrumb } from "antd";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCrud } from "@/hooks/useCrud";
 import { blogSlice } from "@/store/reducers/blog";
@@ -19,7 +19,7 @@ import {
 const PostDetail = () => {
   const params = useParams();
   const id = params.slug as string;
-
+  const router = useRouter();
   const blogs = useCrud("blogs", {
     fetchData: blogSlice.fetchData,
   });
@@ -71,6 +71,9 @@ const PostDetail = () => {
             ),
             key: "blogs",
             className: "cursor-pointer hover:text-black",
+            onClick() {
+              router.push("/posts");
+            },
           },
           {
             title: <p>{post.title}</p>,

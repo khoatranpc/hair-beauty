@@ -558,3 +558,42 @@ export const mockProducts = [
     isNew: true,
   },
 ];
+
+export const mockCategoryProductAccessNews = {
+  _id: {
+    $oid: "67f484f615263aa0fa7325dc",
+  },
+  name: "Tin tức & Mẹo làm đẹp",
+  slug: "tin-tuc-and-meo-lam-dep",
+  description:
+    "Cập nhật những xu hướng làm đẹp mới nhất và các mẹo chăm sóc tóc",
+  parentCategories: [],
+  isActive: true,
+  type: "blog",
+  createdAt: {
+    $date: "2025-04-08T02:07:50.791Z",
+  },
+  updatedAt: {
+    $date: "2025-04-08T02:07:50.791Z",
+  },
+  __v: 0,
+};
+export const mockCategoryShareType = {
+  _id: {
+    $oid: "67f484d815263aa0fa7325cf",
+  },
+  name: "Gợi ý phong cách",
+  slug: "goi-y-phong-cach",
+  parentCategories: [],
+  isActive: true,
+  type: "blog",
+  createdAt: {
+    $date: "2025-04-08T02:07:20.381Z",
+  },
+  updatedAt: {
+    $date: "2025-04-08T02:08:25.075Z",
+  },
+  __v: 0,
+  description:
+    "Khám phá các phong cách làm tóc phù hợp với từng dịp và cách chọn phụ kiện phù hợp",
+};
